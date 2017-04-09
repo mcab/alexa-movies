@@ -57,7 +57,7 @@ def db_insert_one(entry):
         raise ValueError("Too many records trying to be put in.")
     title = entry[0]["display_title"]
     information = entry[0]
-    db = test.alexa
+    db = CLIENT.alexa
     db.movies.count()
     db.movies.insert_one(information)
 
