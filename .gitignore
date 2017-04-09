@@ -91,3 +91,6 @@ ENV/
 # Ignore NYTimes & MongoDB Key
 nytimes-key
 mongodb-key
+
+# Don't include DS_Store.
+.DS_Store
