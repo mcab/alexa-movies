@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Webservice that acts as the glue between Amazon and MongoDB.
+Database script that helps us aggregate information.
 """
 
 import pymongo
@@ -24,6 +24,19 @@ def initialize():
                 CLIENT.admin.command('ismaster')
             except pymongo.errors.ConnectionFailure:
                 print("Server is inaccessible.")
+
+
+def omdb_movie_lookup(title=""):
+    url = "http://www.omdbapi.com/"
+    payload = {"t": title.replace(" ", "+")}
+
+    try:
+        r = requests.get(url, params=payload)
+    except requests.exceptions.RequestException as e:
+        print(e)
+        sys.exit(1)
+
+    return r.json()["Ratings"]
 
 
 def nytimes_critic_movies(type="reviews", resource_type="picks", offset="0", order="by-opening-date"):
@@ -67,11 +80,20 @@ def db_insert(entries):
             db.movies.insert_one(entry)
 
 
+def db_update(entry, data):
+    db = CLIENT.alexa
+    db.movies.find_one_and_update(
+        {"display_title": entry},
+        {'$set': {"ratings": data}}
+    )
+
+
 def main():
     initialize()
     db_insert(nytimes_critic_movies())
     db_insert(nytimes_search_movies(query="28 days later"))
     db_insert(nytimes_search_movies(query="toy story 3"))
+    db_update("Toy Story 3", omdb_movie_lookup("toy story 3"))
 
 
 if __name__ == '__main__':
