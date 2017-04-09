@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """
 Webservice that acts as the glue between Amazon and MongoDB.
 """
@@ -7,7 +9,6 @@ import requests
 import pprint
 
 NYTIMES_API_KEY = None
-MONGODB_CONNECT = False
 CLIENT = None
 
 def initialize():
@@ -17,11 +18,18 @@ def initialize():
         with open('nytimes-key') as nytimes:
             NYTIMES_API_KEY = nytimes.read()
 
-    if not MONGODB_CONNECT:
+    if not CLIENT:
         with open('mongodb-key') as mongodb:
             CLIENT = pymongo.MongoClient(mongodb)
+<<<<<<< HEAD
             MONGODB_CONNECT = True
     print(CLIENT)
+=======
+            try:
+                CLIENT.admin.command('ismaster')
+            except pymongo.errors.ConnectionFailure:
+                print("Server is inaccessible.")
+>>>>>>> origin/master
 
 
 def nytimes_critic_movies(type="reviews", resource_type="picks", offset="0", order="by-opening-date"):
@@ -61,14 +69,30 @@ def db_find_by_name(name):
 
 
 
+def db_insert_one(entry):
+    if len(entry) != 1:
+        raise ValueError("Too many records trying to be put in.")
+    title = entry[0]["display_title"]
+    information = entry[0]
+    db = CLIENT.alexa
+    db.movies.count()
+    db.movies.insert_one(information)
+
+
 def main():
     initialize()
+<<<<<<< HEAD
     #nytimes_critic_movies()
     #nytimes_search_movies(query="28 days later")   
 
     print(db_find_by_name("TOY STORY"))
     #   print(item)
     #print(nytimes_search_movies(query="28 days later"))
+=======
+    nytimes_critic_movies()
+    db_insert_one(nytimes_search_movies(query="28 days later")["results"])
+    db_insert_one(nytimes_search_movies(query="toy story 3")["results"])
+>>>>>>> origin/master
 
 
 if __name__ == '__main__':
