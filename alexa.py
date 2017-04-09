@@ -177,9 +177,10 @@ def welcome():
 
 @ask.intent('MyGenreChoice', mapping={'genre': 'Genre'})
 def genre_call(genre):
-    mv = get_random(genre.capitalize())
-    movie_prompt = render_template('movie_info', mv=movie["display_name"])
-    return question(movie_prompt).simple_card("Movie Selection", movie_prompt)
+    selected_genre = genre.capitalize()
+    mv = get_random(selected_genre)
+    movie_prompt = render_template('movie_info', movie=mv["display_title"])
+    return question(movie_prompt).simple_card("{} Selection".format(selected_genre), movie_prompt)
 
 @ask.intent('AMAZON.CancelIntent')
 def cancel():
