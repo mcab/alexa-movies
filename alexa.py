@@ -11,6 +11,9 @@ from flask_ask import Ask, statement, question, session
 NYTIMES_API_KEY = None
 CLIENT = None
 
+SESSION_MOVIE = "movie"
+SESSION_GENRE = "genre"
+
 def initialize():
     global NYTIMES_API_KEY, MONGODB_CONNECT, CLIENT
 
@@ -173,18 +176,28 @@ ask = Ask(app, '/')
 @ask.launch
 def welcome():
     welcome_message = render_template('welcome')
-    return question(welcome_message)
+    help_message = render_template('help')
+    return question(welcome_message).reprompt(help_message)
 
 @ask.intent('MyGenreChoice', mapping={'genre': 'Genre'})
 def genre_call(genre):
     selected_genre = genre.capitalize()
     mv = get_random(selected_genre)
+    multimedia_present = 1 if mv["multimedia"] != None else 0
     movie_prompt = render_template('movie_info', movie=mv["display_title"])
-    return question(movie_prompt).simple_card("{} Selection".format(selected_genre), movie_prompt)
+    if multimedia_present:
+        return question(movie_prompt).standard_card(title="{} Selection".format(selected_genre), text=movie_prompt, small_image_url=mv["multimedia"]["src"], large_image_url=mv["multimedia"]["src"])
+    else:
+        return question(movie_prompt).simple_card(title="{} Selection".format(selected_genre), content=movie_prompt)
 
 @ask.intent('AMAZON.CancelIntent')
 def cancel():
     return question("cancel")
+
+@ask.intent('AMAZON.HelpIntent')
+def help():
+    help_text = render_template('help')
+    return question(help_text)
 
 @ask.intent('AMAZON.NoIntent')
 def no():

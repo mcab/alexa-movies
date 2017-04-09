@@ -1,5 +1,8 @@
 welcome: Welcome to the finest movie reviews.
 
+help: |
+      I can suggest a movie out of the hundreds of New York Times critiqued movies. Just tell me if you want a random movie, or a specific genre, and I can give you a title, ratings, and a link to the review.
+
 random_query: Do you want a random movie?
 
 genre_query: What kind of movie are you interested in?

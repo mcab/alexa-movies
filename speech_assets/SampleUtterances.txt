@@ -1,4 +1,12 @@
 MyGenreChoice  i am interested in {Genre}
+MyGenreChoice  i am interested in watching {Genre}
+MyGenreChoice  i am interested in seeing {Genre}
 MyGenreChoice  i want to see {Genre}
+MyGenreChoice  i want to see a {Genre}
+MyGenreChoice  i want to see a {Genre} movie
 MyGenreChoice  do you have {Genre}
+MyGenreChoice  do you have a {Genre}
+MyGenreChoice  do you have a {Genre} movie
 MyGenreChoice  can i see {Genre}
+MyGenreChoice  can i see a {Genre}
+MyGenreChoice  can i see a {Genre} movie
