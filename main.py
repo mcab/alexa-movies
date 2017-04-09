@@ -22,8 +22,15 @@ def initialize():
             MONGODB_CONNECT = True
 
 
+def nytimes_movies(type="reviews", resource_type="picks", offset="0", order="by-opening-date"):
+    url = "http://api.nytimes.com/svc/movies/v2/" + type + "/" + resource_type + ".json"
+    payload = {"api-key": NYTIMES_API_KEY, "offset": offset, "order": order}
+    r = requests.get(url, params=payload)
+
+
 def main():
     initialize()
+    nytimes_movies()
 
 
 if __name__ == '__main__':
