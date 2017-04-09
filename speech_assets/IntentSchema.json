@@ -1,0 +1,25 @@
+{
+    "intents": [
+        {
+            "intent": "MyGenreChoice",
+            "slots": [
+                {
+                    "name": "Genre",
+                    "type": "LIST_OF_GENRES"
+                }
+            ]
+        },
+        {
+            "intent": "AMAZON.CancelIntent"
+        },
+        {
+            "intent": "AMAZON.NoIntent"
+        },
+        {
+            "intent": "AMAZON.StopIntent"
+        },
+        {
+            "intent": "AMAZON.YesIntent"
+        }
+    ]
+}

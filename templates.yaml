@@ -1,4 +1,15 @@
 welcome: Welcome to the finest movie reviews.
 
-query: What movie are you interested in?
+random_query: Do you want a random movie?
 
+genre_query: What kind of movie are you interested in?
+
+query_error: I'm sorry, I didn't catch that.
+
+query_error2: Sorry, I don't quite understand that.
+
+movie_info: What about {{ movie }}?
+
+rating_info: It was rated {{ rating }} on {{ }}.
+
+summary_info: The movie's summary is... {{ summary }}
