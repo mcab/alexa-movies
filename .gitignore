@@ -88,5 +88,6 @@ ENV/
 # Rope project settings
 .ropeproject
 
-# Ignore NYTimes Key
+# Ignore NYTimes & MongoDB Key
 nytimes-key
+mongodb-key
