@@ -29,7 +29,7 @@ def initialize():
     if db_find_one("Barry"):
         pass
     else:
-        for x in range(1, 51):
+        for x in range(1, 2):
             db_insert(nytimes_critic_movies(offset=20 * x))
 
 
@@ -52,7 +52,7 @@ def omdb_movie_lookup(title=""):
     except KeyError:
         return None
 
-    return r.json()["Ratings"]
+    return r.json()
 
 
 def nytimes_critic_movies(type="reviews", resource_type="picks", offset="0", order="by-opening-date"):
@@ -96,25 +96,34 @@ def db_insert(entries):
             db.movies.insert_one(entry)
 
 
-def db_update(entry, data):
+def db_update(entry, data, flag):
     db = CLIENT.alexa
-    db.movies.find_one_and_update(
-        {"display_title": entry},
-        {'$set': {"ratings": data}}
-    )
+    if flag == 0:
+        db.movies.find_one_and_update(
+            {"display_title": entry},
+            {'$set': {"ratings": data}}
+        )
+    else:
+        db.movies.find_one_and_update(
+            {"display_title": entry},
+            {'$set': {"genre": data.split(", ")}}
+        )
 
 
 def update_ratings():
     db = CLIENT.alexa
 
-    if db_find_one("Barry")["ratings"] != None:
-        return 0
+    #if db_find_one("Barry")["ratings"] != None:
+    #   return 0
 
     movies = db.movies.find()
     for movie in movies:
         title = movie["display_title"]
         if verify_title(title):
-            db_update(title, omdb_movie_lookup(title))
+            data = omdb_movie_lookup(title)
+            if data != None:
+                db_update(title, data["Ratings"], 0)
+                db_update(title, data["Genre"], 1)
 
 
 def verify_title(title):

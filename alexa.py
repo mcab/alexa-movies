@@ -8,7 +8,7 @@ ask = Ask(app, '/')
 @ask.launch
 def welcome():
     welcome_message = render_template('welcome')
-    return statement(welcome).simple_card('Welcome to Movie Information.')
+    return statement(welcome).simple_card('Welcome to The Critics Review.')
 
 @ask.intent('YesIntent')
 def look_up():
@@ -17,3 +17,4 @@ def look_up():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
