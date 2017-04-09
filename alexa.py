@@ -11,9 +11,6 @@ from flask_ask import Ask, statement, question, session
 NYTIMES_API_KEY = None
 CLIENT = None
 
-SESSION_MOVIE = "movie"
-SESSION_GENRE = "genre"
-
 def initialize():
     global NYTIMES_API_KEY, MONGODB_CONNECT, CLIENT
 
@@ -175,20 +172,49 @@ ask = Ask(app, '/')
 
 @ask.launch
 def welcome():
+    session.attributes['movie'] = "Princess Mononoke"
     welcome_message = render_template('welcome')
     help_message = render_template('help')
     return question(welcome_message).reprompt(help_message)
 
 @ask.intent('MyGenreChoice', mapping={'genre': 'Genre'})
 def genre_call(genre):
-    selected_genre = genre.capitalize()
+    genre_issues = ["film noire", "film noir", "sci fi", "sci-fi"]
+    if genre in genre_issues:
+        if genre[0] == "f":
+            selected_genre = "Film-Noir"
+        else:
+            selected_genre = "Sci-Fi"
+    else:
+        selected_genre = genre.capitalize()
     mv = get_random(selected_genre)
     multimedia_present = 1 if mv["multimedia"] != None else 0
+    session.attributes['movie'] = mv["display_title"]
     movie_prompt = render_template('movie_info', movie=mv["display_title"])
     if multimedia_present:
         return question(movie_prompt).standard_card(title="{} Selection".format(selected_genre), text=movie_prompt, small_image_url=mv["multimedia"]["src"], large_image_url=mv["multimedia"]["src"])
     else:
         return question(movie_prompt).simple_card(title="{} Selection".format(selected_genre), content=movie_prompt)
+
+@ask.intent('MoreInformationChoice')
+def more_information():
+    movie_data = db_find_one(session.attributes['movie'])
+    movie_title = movie_data["display_title"]
+    movie_information = render_template('summary_info', summary=movie_data["summary_short"])
+    movie_ratings = movie_data["ratings"]
+    if len(movie_ratings) == 3:
+        ratings = render_template('rating3_info', movie=movie_title, rating_amount_1=movie_ratings[0]["Value"], rating_place_1=movie_ratings[0]["Source"], rating_amount_2=movie_ratings[1]["Value"], rating_place_2=movie_ratings[1]["Source"], rating_amount_3=movie_ratings[2]["Value"], rating_place_3=movie_ratings[2]["Source"], review_link=movie_data["link"]["url"])
+        return statement(movie_information).simple_card(title="More about {}".format(movie_data["display_title"]), content=ratings)
+    elif len(movie_ratings) == 2:
+        ratings = render_template('rating2_info', movie=movie_title, rating_amount_1=movie_ratings[0]["Value"], rating_place_1=movie_ratings[0]["Source"], rating_amount_2=movie_ratings[1]["Value"], rating_place_2=movie_ratings[1]["Source"], review_link=movie_data["link"]["url"])
+        return statement(movie_information).simple_card(title="More about {}".format(movie_data["display_title"]), content=ratings)
+    elif len(movie_ratings) == 1:
+        ratings = render_template('rating1_info', movie=movie_title, rating_amount_1=movie_ratings[0]["Value"], rating_place_1=movie_ratings[0]["Source"], review_link=movie_data["link"]["url"])
+        return statement(movie_information).simple_card(title="More about {}".format(movie_data["display_title"]), content=ratings)
+    else:
+        ratings = render_template('rating0_info', movie=movie_title, review_link=movie_data["link"]["url"])
+        return statement(movie_information).simple_card(title="More about {}".format(movie_data["display_title"]), content=ratings)
+
 
 @ask.intent('AMAZON.CancelIntent')
 def cancel():
@@ -205,7 +231,7 @@ def no():
 
 @ask.intent('AMAZON.StopIntent')
 def stop():
-    return question("stop")
+    return statement("stop")
 
 @ask.intent('AMAZON.YesIntent')
 def yes():

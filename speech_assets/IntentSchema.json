@@ -10,6 +10,9 @@
             ]
         },
         {
+            "intent": "MoreInformationChoice"
+        },
+        {
             "intent": "AMAZON.CancelIntent"
         },
         {

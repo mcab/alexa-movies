@@ -13,6 +13,12 @@ query_error2: Sorry, I don't quite understand that.
 
 movie_info: What about {{ movie }}?
 
-rating_info: It was rated {{ rating }} on {{ }}.
+rating0_info: Sorry, {{ movie }} has no rating information.
+
+rating1_info: The movie {{ movie }} was rated {{ rating_amount_1 }} on {{ rating_place_1 }}. The review is located at {{ review_link }}.
+
+rating2_info: The movie {{ movie }} was rated {{ rating_amount_1 }} on {{ rating_place_1 }} and {{ rating_amount_2 }} on {{ rating_place_2 }}. The review is located at {{ review_link }}.
+
+rating3_info: The movie {{ movie }} was rated {{ rating_amount_1 }} on {{ rating_place_1 }}, {{ rating_amount_2 }} on {{ rating_place_2 }}, and {{ rating_amount_3 }} on {{ rating_place_3 }}. The review is located on {{ review_link }}.
 
 summary_info: The movie's summary is... {{ summary }}

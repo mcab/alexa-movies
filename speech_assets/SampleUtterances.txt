@@ -10,3 +10,9 @@ MyGenreChoice  do you have a {Genre} movie
 MyGenreChoice  can i see {Genre}
 MyGenreChoice  can i see a {Genre}
 MyGenreChoice  can i see a {Genre} movie
+
+MoreInformationChoice  tell me more
+MoreInformationChoice  give me more
+MoreInformationChoice  show me more
+MoreInformationChoice  i want to know more
+MoreInformationChoice  i must know more
