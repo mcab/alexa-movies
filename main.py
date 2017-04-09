@@ -25,7 +25,16 @@ def initialize():
 def nytimes_movies(type="reviews", resource_type="picks", offset="0", order="by-opening-date"):
     url = "http://api.nytimes.com/svc/movies/v2/" + type + "/" + resource_type + ".json"
     payload = {"api-key": NYTIMES_API_KEY, "offset": offset, "order": order}
-    r = requests.get(url, params=payload)
+
+    try:
+        r = requests.get(url, params=payload)
+    except requests.exceptions.RequestException as e:
+        print(e)
+        sys.exit(1)
+
+    response = r.json()
+    for movie in response['results']:
+        print(movie)
 
 
 def main():
