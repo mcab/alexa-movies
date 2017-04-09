@@ -6,6 +6,7 @@ Database script that helps us aggregate information.
 
 import pymongo
 import requests
+import urllib
 
 NYTIMES_API_KEY = None
 CLIENT = None
@@ -25,16 +26,31 @@ def initialize():
             except pymongo.errors.ConnectionFailure:
                 print("Server is inaccessible.")
 
+    if db_find_one("Barry"):
+        pass
+    else:
+        for x in range(1, 51):
+            db_insert(nytimes_critic_movies(offset=20 * x))
+
 
 def omdb_movie_lookup(title=""):
     url = "http://www.omdbapi.com/"
-    payload = {"t": title.replace(" ", "+")}
+    title = urllib.parse.quote_plus(title).replace("%E2%80%99", "%27")
+    payload = {"t": title}
 
     try:
         r = requests.get(url, params=payload)
     except requests.exceptions.RequestException as e:
         print(e)
         sys.exit(1)
+
+    if r.json()["Response"] == "False":
+        return None
+
+    try:
+        r.json()["Ratings"]
+    except KeyError:
+        return None
 
     return r.json()["Ratings"]
 
@@ -88,12 +104,30 @@ def db_update(entry, data):
     )
 
 
+def update_ratings():
+    db = CLIENT.alexa
+
+    if db_find_one("Barry")["ratings"] != None:
+        return 0
+
+    movies = db.movies.find()
+    for movie in movies:
+        title = movie["display_title"]
+        if verify_title(title):
+            db_update(title, omdb_movie_lookup(title))
+
+
+def verify_title(title):
+    bad_characters = ["’"]
+    for character in bad_characters:
+        if character in title:
+            return False
+    return True
+
+
 def main():
     initialize()
-    db_insert(nytimes_critic_movies())
-    db_insert(nytimes_search_movies(query="28 days later"))
-    db_insert(nytimes_search_movies(query="toy story 3"))
-    db_update("Toy Story 3", omdb_movie_lookup("toy story 3"))
+    update_ratings()
 
 
 if __name__ == '__main__':
