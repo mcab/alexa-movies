@@ -36,7 +36,7 @@ def nytimes_critic_movies(type="reviews", resource_type="picks", offset="0", ord
         print(e)
         sys.exit(1)
 
-    return r.json()
+    return r.json()["results"]
 
 
 def nytimes_search_movies(offset="0", order="by-opening-date", query=""):
@@ -49,7 +49,7 @@ def nytimes_search_movies(offset="0", order="by-opening-date", query=""):
         print(e)
         sys.exit(1)
 
-    return r.json()
+    return r.json()["results"]
 
 
 def db_find_one(name):
@@ -59,22 +59,19 @@ def db_find_one(name):
     return result
 
 
-def db_insert_one(entry):
-    if len(entry) != 1:
-        raise ValueError("Too many records trying to be put in.")
-    title = entry[0]["display_title"]
-    information = entry[0]
+def db_insert(entries):
     db = CLIENT.alexa
-    db.movies.count()
-    db.movies.insert_one(information)
+    for entry in entries:
+        title = entry["display_title"]
+        if not db_find_one(title):
+            db.movies.insert_one(entry)
 
 
 def main():
     initialize()
-    nytimes_critic_movies()
-    db_insert_one(nytimes_search_movies(query="28 days later")["results"])
-    db_insert_one(nytimes_search_movies(query="toy story 3")["results"])
-    print(db_find_one("Toy Story 3"))
+    db_insert(nytimes_critic_movies())
+    db_insert(nytimes_search_movies(query="28 days later"))
+    db_insert(nytimes_search_movies(query="toy story 3"))
 
 
 if __name__ == '__main__':
