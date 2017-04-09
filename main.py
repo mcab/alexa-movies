@@ -4,6 +4,7 @@ Webservice that acts as the glue between Amazon and MongoDB.
 
 import pymongo
 import requests
+import pprint
 
 NYTIMES_API_KEY = None
 MONGODB_CONNECT = False
@@ -20,6 +21,7 @@ def initialize():
         with open('mongodb-key') as mongodb:
             CLIENT = pymongo.MongoClient(mongodb)
             MONGODB_CONNECT = True
+    print(CLIENT)
 
 
 def nytimes_critic_movies(type="reviews", resource_type="picks", offset="0", order="by-opening-date"):
@@ -47,11 +49,26 @@ def nytimes_search_movies(offset="0", order="by-opening-date", query=""):
 
     return r.json()
 
+def db_find_by_name(name):
+    with open('mongodb-key') as mongodb:
+            CLIENT = pymongo.MongoClient(mongodb)
+    db = CLIENT['alexa']
+    collection = db.movies
+    result = collection.find()
+    return result
+
+
+
+
 
 def main():
     initialize()
-    nytimes_critic_movies()
-    nytimes_search_movies(query="28 days later")
+    #nytimes_critic_movies()
+    #nytimes_search_movies(query="28 days later")   
+
+    print(db_find_by_name("TOY STORY"))
+    #   print(item)
+    #print(nytimes_search_movies(query="28 days later"))
 
 
 if __name__ == '__main__':
