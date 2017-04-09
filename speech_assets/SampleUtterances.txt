@@ -1,5 +1,4 @@
 MyGenreChoice  i am interested in {Genre}
 MyGenreChoice  i want to see {Genre}
 MyGenreChoice  do you have {Genre}
-MyGenreChoice  can i see {Genre
 MyGenreChoice  can i see {Genre}
