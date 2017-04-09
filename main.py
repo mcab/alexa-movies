@@ -3,6 +3,7 @@ Webservice that acts as the glue between Amazon and MongoDB.
 """
 
 import pymongo
+import requests
 
 NYTIMES_API_KEY = None
 MONGODB_CONNECT = False
