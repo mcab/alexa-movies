@@ -29,7 +29,7 @@ def initialize():
     if db_find_one("Barry"):
         pass
     else:
-        for x in range(1, 2):
+        for x in range(1, 51):
             db_insert(nytimes_critic_movies(offset=20 * x))
 
 
@@ -113,8 +113,8 @@ def db_update(entry, data, flag):
 def update_ratings():
     db = CLIENT.alexa
 
-    #if db_find_one("Barry")["ratings"] != None:
-    #   return 0
+    if db_find_one("Creepy")["ratings"] != None:
+       return 0
 
     movies = db.movies.find()
     for movie in movies:
@@ -134,10 +134,28 @@ def verify_title(title):
     return True
 
 
+def count_genre():
+    db = CLIENT.alexa
+    movies = db.movies.find()
+    all_genres = {}
+    for movie in movies:
+        try:
+            movie["genre"]
+        except KeyError:
+            continue
+        genres = movie["genre"]
+        for genre in genres:
+            if genre not in all_genres:
+                all_genres[genre] = 1
+            else:
+                all_genres[genre] += 1
+    print(all_genres)
+
+
 def main():
     initialize()
     update_ratings()
-
+    # count_genre()
 
 if __name__ == '__main__':
     main()
