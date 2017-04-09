@@ -13,19 +13,16 @@
             "intent": "MoreInformationChoice"
         },
         {
+            "intent": "RandomMovieChoice"
+        },
+        {
             "intent": "AMAZON.CancelIntent"
         },
         {
             "intent": "AMAZON.HelpIntent"
         },
         {
-            "intent": "AMAZON.NoIntent"
-        },
-        {
             "intent": "AMAZON.StopIntent"
-        },
-        {
-            "intent": "AMAZON.YesIntent"
         }
     ]
 }

@@ -1,15 +1,9 @@
-welcome: Welcome to the finest movie reviews.
+welcome: Welcome to the finest movie reviews. You can either say... I want to see a particular genre, or ask for a random movie.
 
 help: |
       I can suggest a movie out of the hundreds of New York Times critiqued movies. Just tell me if you want a random movie, or a specific genre, and I can give you a title, ratings, and a link to the review.
 
-random_query: Do you want a random movie?
-
 genre_query: What kind of movie are you interested in?
-
-query_error: I'm sorry, I didn't catch that.
-
-query_error2: Sorry, I don't quite understand that.
 
 movie_info: What about {{ movie }}?
 
@@ -22,3 +16,7 @@ rating2_info: The movie {{ movie }} was rated {{ rating_amount_1 }} on {{ rating
 rating3_info: The movie {{ movie }} was rated {{ rating_amount_1 }} on {{ rating_place_1 }}, {{ rating_amount_2 }} on {{ rating_place_2 }}, and {{ rating_amount_3 }} on {{ rating_place_3 }}. The review is located on {{ review_link }}.
 
 summary_info: The movie's summary is... {{ summary }}
+
+goodbye: Thanks for browsing. Good bye, now.
+
+cancel: Okay, I'll pause for now.

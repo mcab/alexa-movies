@@ -16,3 +16,9 @@ MoreInformationChoice  give me more
 MoreInformationChoice  show me more
 MoreInformationChoice  i want to know more
 MoreInformationChoice  i must know more
+
+RandomMovieChoice  give me a random movie
+RandomMovieChoice  surprise me
+RandomMovieChoice  i don't know
+RandomMovieChoice  choose me something
+RandomMovieChoice  something random

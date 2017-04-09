@@ -152,7 +152,7 @@ def count_genre():
     print(all_genres)
 
 
-def get_random(genre):
+def get_random_by_genre(genre):
     db = CLIENT.alexa
     movies = db.movies.find()
     movies_set = []
@@ -163,8 +163,17 @@ def get_random(genre):
             continue
         if genre in movie["genre"]:
             movies_set.append(movie)
-
     return random.choice(movies_set)
+
+
+def get_random():
+    db = CLIENT.alexa
+    movies = db.movies.find()
+    movies_set = []
+    for movie in movies:
+        movies_set.append(movie)
+    return random.choice(movies_set)
+
 
 app = Flask(__name__)
 ask = Ask(app, '/')
@@ -187,7 +196,7 @@ def genre_call(genre):
             selected_genre = "Sci-Fi"
     else:
         selected_genre = genre.capitalize()
-    mv = get_random(selected_genre)
+    mv = get_random_by_genre(selected_genre)
     multimedia_present = 1 if mv["multimedia"] != None else 0
     session.attributes['movie'] = mv["display_title"]
     movie_prompt = render_template('movie_info', movie=mv["display_title"])
@@ -195,6 +204,17 @@ def genre_call(genre):
         return question(movie_prompt).standard_card(title="{} Selection".format(selected_genre), text=movie_prompt, small_image_url=mv["multimedia"]["src"], large_image_url=mv["multimedia"]["src"])
     else:
         return question(movie_prompt).simple_card(title="{} Selection".format(selected_genre), content=movie_prompt)
+
+@ask.intent('RandomMovieChoice')
+def random_call():
+    mv = get_random()
+    multimedia_present = 1 if mv["multimedia"] != None else 0
+    session.attributes['movie'] = mv["display_title"]
+    movie_prompt = render_template('movie_info', movie=mv["display_title"])
+    if multimedia_present:
+        return question(movie_prompt).standard_card(title="Random Selection", text=movie_prompt, small_image_url=mv["multimedia"]["src"], large_image_url=mv["multimedia"]["src"])
+    else:
+        return question(movie_prompt).simple_card(title="Random Selection", content=movie_prompt)
 
 @ask.intent('MoreInformationChoice')
 def more_information():
@@ -204,42 +224,34 @@ def more_information():
     movie_ratings = movie_data["ratings"]
     if len(movie_ratings) == 3:
         ratings = render_template('rating3_info', movie=movie_title, rating_amount_1=movie_ratings[0]["Value"], rating_place_1=movie_ratings[0]["Source"], rating_amount_2=movie_ratings[1]["Value"], rating_place_2=movie_ratings[1]["Source"], rating_amount_3=movie_ratings[2]["Value"], rating_place_3=movie_ratings[2]["Source"], review_link=movie_data["link"]["url"])
-        return statement(movie_information).simple_card(title="More about {}".format(movie_data["display_title"]), content=ratings)
+        return question(movie_information).simple_card(title="More about {}".format(movie_data["display_title"]), content=ratings)
     elif len(movie_ratings) == 2:
         ratings = render_template('rating2_info', movie=movie_title, rating_amount_1=movie_ratings[0]["Value"], rating_place_1=movie_ratings[0]["Source"], rating_amount_2=movie_ratings[1]["Value"], rating_place_2=movie_ratings[1]["Source"], review_link=movie_data["link"]["url"])
-        return statement(movie_information).simple_card(title="More about {}".format(movie_data["display_title"]), content=ratings)
+        return question(movie_information).simple_card(title="More about {}".format(movie_data["display_title"]), content=ratings)
     elif len(movie_ratings) == 1:
         ratings = render_template('rating1_info', movie=movie_title, rating_amount_1=movie_ratings[0]["Value"], rating_place_1=movie_ratings[0]["Source"], review_link=movie_data["link"]["url"])
-        return statement(movie_information).simple_card(title="More about {}".format(movie_data["display_title"]), content=ratings)
+        return question(movie_information).simple_card(title="More about {}".format(movie_data["display_title"]), content=ratings)
     else:
         ratings = render_template('rating0_info', movie=movie_title, review_link=movie_data["link"]["url"])
-        return statement(movie_information).simple_card(title="More about {}".format(movie_data["display_title"]), content=ratings)
-
+        return question(movie_information).simple_card(title="More about {}".format(movie_data["display_title"]), content=ratings)
 
 @ask.intent('AMAZON.CancelIntent')
 def cancel():
-    return question("cancel")
+    cancel_text = render_template('cancel')
+    return question(cancel_text)
 
 @ask.intent('AMAZON.HelpIntent')
 def help():
     help_text = render_template('help')
     return question(help_text)
 
-@ask.intent('AMAZON.NoIntent')
-def no():
-    return question("no")
-
 @ask.intent('AMAZON.StopIntent')
 def stop():
-    return statement("stop")
-
-@ask.intent('AMAZON.YesIntent')
-def yes():
-    return question("yes")
+    goodbye_message = render_template('goodbye')
+    return statement(goodbye_message)
 
 
 if __name__ == '__main__':
     initialize()
     update_ratings()
     app.run(debug=True)
-
